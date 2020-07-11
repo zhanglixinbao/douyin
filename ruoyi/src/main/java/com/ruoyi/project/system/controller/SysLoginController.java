@@ -1,12 +1,5 @@
 package com.ruoyi.project.system.controller;
 
-import java.util.List;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.framework.security.LoginBody;
@@ -14,10 +7,21 @@ import com.ruoyi.framework.security.LoginUser;
 import com.ruoyi.framework.security.service.SysLoginService;
 import com.ruoyi.framework.security.service.SysPermissionService;
 import com.ruoyi.framework.security.service.TokenService;
+import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.framework.web.page.TableDataInfo;
+import com.ruoyi.project.system.domain.China;
+import com.ruoyi.project.system.domain.Customer;
 import com.ruoyi.project.system.domain.SysMenu;
 import com.ruoyi.project.system.domain.SysUser;
+import com.ruoyi.project.system.service.IChinaService;
+import com.ruoyi.project.system.service.ICustomerService;
 import com.ruoyi.project.system.service.ISysMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * 登录验证
@@ -25,7 +29,7 @@ import com.ruoyi.project.system.service.ISysMenuService;
  * @author ruoyi
  */
 @RestController
-public class SysLoginController
+public class SysLoginController extends BaseController
 {
     @Autowired
     private SysLoginService loginService;
@@ -38,6 +42,12 @@ public class SysLoginController
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private IChinaService chinaService;
+
+    @Autowired
+    private ICustomerService customerService;
 
     /**
      * 登录方法
@@ -54,6 +64,26 @@ public class SysLoginController
                 loginBody.getUuid());
         ajax.put(Constants.TOKEN, token);
         return ajax;
+    }
+    @PostMapping("/test")
+    public int test(@RequestBody Customer customer)
+    {
+        return customerService.insertCustomer(customer);
+    }
+
+    @GetMapping("/getProvinceList")
+    public TableDataInfo getProvinceList()
+    {
+        List<China> list = chinaService.getProvinceList();
+        return getDataTable(list);
+    }
+    @GetMapping("/getCity/{province}")
+    public TableDataInfo getCity(@PathVariable Long province )
+    {
+        China china = new China();
+        china.setPid(province);
+        List<China> list = chinaService.getCity(china);
+        return getDataTable(list);
     }
 
     /**

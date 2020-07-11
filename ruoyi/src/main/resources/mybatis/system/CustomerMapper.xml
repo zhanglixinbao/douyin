@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CustomerMapper">
+    
+    <resultMap type="Customer" id="CustomerResult">
+        <result property="userid"    column="userid"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="iphone"    column="iphone"    />
+        <result property="trade"    column="trade"    />
+        <result property="business"    column="business"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="products"    column="products"    />
+        <result property="ps"    column="ps"    />
+    </resultMap>
+
+    <sql id="selectCustomerVo">
+        select userid, nickname, iphone, trade, business, province, city, products, ps from customer
+    </sql>
+
+    <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        <where>  
+            <if test="nickname != null  and nickname != ''"> and nickname like concat('%', #{nickname}, '%')</if>
+            <if test="iphone != null  and iphone != ''"> and iphone = #{iphone}</if>
+            <if test="trade != null  and trade != ''"> and trade = #{trade}</if>
+            <if test="business != null  and business != ''"> and business = #{business}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="products != null  and products != ''"> and products = #{products}</if>
+            <if test="ps != null  and ps != ''"> and ps = #{ps}</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerById" parameterType="Long" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        where userid = #{userid}
+    </select>
+        
+    <insert id="insertCustomer" parameterType="Customer">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userid != null">userid,</if>
+            <if test="nickname != null">nickname,</if>
+            <if test="iphone != null">iphone,</if>
+            <if test="trade != null">trade,</if>
+            <if test="business != null">business,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="products != null">products,</if>
+            <if test="ps != null">ps,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userid != null">#{userid},</if>
+            <if test="nickname != null">#{nickname},</if>
+            <if test="iphone != null">#{iphone},</if>
+            <if test="trade != null">#{trade},</if>
+            <if test="business != null">#{business},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="products != null">#{products},</if>
+            <if test="ps != null">#{ps},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomer" parameterType="Customer">
+        update customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="iphone != null">iphone = #{iphone},</if>
+            <if test="trade != null">trade = #{trade},</if>
+            <if test="business != null">business = #{business},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="products != null">products = #{products},</if>
+            <if test="ps != null">ps = #{ps},</if>
+        </trim>
+        where userid = #{userid}
+    </update>
+
+    <delete id="deleteCustomerById" parameterType="Long">
+        delete from customer where userid = #{userid}
+    </delete>
+
+    <delete id="deleteCustomerByIds" parameterType="String">
+        delete from customer where userid in 
+        <foreach item="userid" collection="array" open="(" separator="," close=")">
+            #{userid}
+        </foreach>
+    </delete>
+    
+</mapper>
